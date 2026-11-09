@@ -11,6 +11,12 @@ Exposes primary API endpoints:
 
 import base64
 import os
+import sys
+
+# Ensure backend directory is in sys.path for Gunicorn/production execution
+current_dir = os.path.dirname(os.path.abspath(__file__))
+if current_dir not in sys.path:
+    sys.path.insert(0, current_dir)
 
 import cv2
 import numpy as np
@@ -21,14 +27,31 @@ from modules.comparison import compare_images
 from modules.edge_detection import detect_edges
 from modules.ela_analysis import perform_ela
 from modules.noise_analysis import detect_noise_inconsistency
-from modules.ocr_analysis import extract_text
+from modules.ocr_analysis import extract_text, is_ocr_available
 from modules.preprocessing import preprocess_image, resize_for_comparison
 from modules.report_generator import generate_text_report
 from modules.verdict import calculate_verdict, calculate_comparison_verdict
 from modules.video_analysis import process_video_file
 
 app = Flask(__name__)
-CORS(app)
+
+# Configure CORS: support FRONTEND_URL environment variable for production hosting
+frontend_url_env = os.environ.get('FRONTEND_URL', '').strip()
+if frontend_url_env and frontend_url_env != '*':
+    # Allow configured frontend URLs (stripping trailing slash) and preserve local dev origins
+    allowed_origins = [url.strip().rstrip('/') for url in frontend_url_env.split(',') if url.strip()]
+    allowed_origins.extend([
+        'http://localhost:5173',
+        'http://127.0.0.1:5173',
+        'http://localhost:3000',
+        'http://127.0.0.1:3000',
+        'http://localhost:4173',
+        'http://127.0.0.1:4173',
+    ])
+    CORS(app, origins=list(dict.fromkeys(allowed_origins)), supports_credentials=True)
+else:
+    # Default permissive CORS for local development
+    CORS(app)
 
 os.makedirs('input', exist_ok=True)
 os.makedirs('output', exist_ok=True)
@@ -80,8 +103,12 @@ def _highlight_ela_regions(img_rgb: np.ndarray, ela_img: np.ndarray) -> tuple[np
 
 @app.route('/api/health', methods=['GET'])
 def health():
-    """Health-check endpoint used by the frontend to detect backend availability."""
-    return jsonify({'status': 'ok', 'message': 'Backend is running'})
+    """Health-check endpoint used by the frontend and hosting platforms to detect backend availability."""
+    return jsonify({
+        'status': 'ok',
+        'message': 'Backend is running',
+        'ocr_available': is_ocr_available(),
+    }), 200
 
 
 @app.route('/api/analyze', methods=['POST'])
@@ -273,4 +300,7 @@ def analyze_video():
 
 
 if __name__ == '__main__':
-    app.run(debug=True, host='0.0.0.0', port=5000)
+    # Disable Flask debug mode by default in production
+    debug_mode = os.environ.get('FLASK_DEBUG', 'False').lower() in ('true', '1', 't')
+    port = int(os.environ.get('PORT', 5000))
+    app.run(debug=debug_mode, host='0.0.0.0', port=port)

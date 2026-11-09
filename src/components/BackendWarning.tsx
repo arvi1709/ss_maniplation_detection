@@ -1,5 +1,6 @@
 import { AlertTriangle, Terminal, X } from 'lucide-react';
 import { useState } from 'react';
+import { API_BASE } from '../services/api';
 
 export function BackendWarning() {
   const [dismissed, setDismissed] = useState(false);
@@ -13,7 +14,7 @@ export function BackendWarning() {
         <p className="text-amber-300 font-medium text-sm">Python Backend Required</p>
         <p className="text-amber-400/80 text-xs mt-1">
           This tool requires the Python Flask backend running at{' '}
-          <code className="bg-amber-500/20 px-1.5 py-0.5 rounded font-mono">localhost:5000</code>.
+          <code className="bg-amber-500/20 px-1.5 py-0.5 rounded font-mono">{API_BASE}</code>.
           Start it with:
         </p>
         <div className="mt-2 flex items-center gap-2 bg-slate-900/60 rounded-lg px-3 py-2 border border-slate-700/50">
