@@ -1,5 +1,5 @@
 import { useRef, useState, DragEvent } from 'react';
-import { Upload, X, Video, AlertCircle } from 'lucide-react';
+import { Upload, X, Film, AlertCircle, FileCheck } from 'lucide-react';
 
 interface VideoUploadZoneProps {
   file: File | null;
@@ -52,13 +52,16 @@ export function VideoUploadZone({ file, onChange, onError }: VideoUploadZoneProp
 
   return (
     <div className="flex-1 min-w-0">
-      <p className="text-slate-400 text-xs font-medium uppercase tracking-widest mb-2">
-        Video File for Temporal Analysis
-      </p>
+      <div className="flex items-center justify-between mb-2">
+        <p className="text-slate-700 text-xs font-semibold uppercase tracking-wider">
+          Video Sequence for Temporal Analysis
+        </p>
+        <span className="text-slate-400 text-[11px]">MP4, AVI • Max 60s • 100 MB</span>
+      </div>
 
       {localError && (
-        <div className="flex items-center gap-2 mb-3 px-3 py-2 bg-red-500/10 border border-red-500/20 rounded-xl text-red-400 text-xs">
-          <AlertCircle className="w-4 h-4 shrink-0" />
+        <div className="flex items-center gap-2 mb-3 px-3.5 py-2.5 bg-rose-50 border border-rose-200 rounded-xl text-rose-700 text-xs">
+          <AlertCircle className="w-4 h-4 shrink-0 text-rose-500" />
           <span>{localError}</span>
         </div>
       )}
@@ -72,18 +75,22 @@ export function VideoUploadZone({ file, onChange, onError }: VideoUploadZoneProp
           onDragLeave={() => setDragging(false)}
           onDrop={handleDrop}
           onClick={() => inputRef.current?.click()}
-          className={`relative flex flex-col items-center justify-center gap-3 border-2 border-dashed rounded-xl cursor-pointer transition-all duration-200 h-52 ${
+          className={`relative flex flex-col items-center justify-center gap-3 border-2 border-dashed rounded-xl cursor-pointer transition-all duration-200 h-56 bg-white ${
             dragging
-              ? 'border-blue-400 bg-blue-500/10'
-              : 'border-slate-600 hover:border-slate-500 bg-slate-800/50 hover:bg-slate-800'
+              ? 'border-blue-500 bg-blue-50/50 scale-[0.99]'
+              : 'border-slate-300 hover:border-blue-400 hover:bg-slate-50/70 shadow-2xs'
           }`}
         >
-          <div className={`p-3.5 rounded-full transition-colors ${dragging ? 'bg-blue-500/20' : 'bg-slate-700'}`}>
-            <Upload className={`w-6 h-6 ${dragging ? 'text-blue-400' : 'text-slate-400'}`} />
+          <div className={`p-3.5 rounded-full transition-colors ${dragging ? 'bg-blue-100 text-blue-600' : 'bg-slate-100 text-slate-500'}`}>
+            <Upload className="w-5 h-5" />
           </div>
           <div className="text-center px-4">
-            <p className="text-slate-300 text-sm font-medium">Drop video here or click to browse</p>
-            <p className="text-slate-500 text-xs mt-1">MP4 or AVI format • Maximum 60s duration • Up to 100 MB</p>
+            <p className="text-slate-800 text-sm font-semibold">
+              Drop video here or <span className="text-blue-600 underline decoration-blue-300 underline-offset-2">browse</span>
+            </p>
+            <p className="text-slate-500 text-xs mt-1">
+              Supports MP4 or AVI • Samples 1 frame/sec for temporal diff and SSIM metrics
+            </p>
           </div>
           <input
             ref={inputRef}
@@ -97,20 +104,33 @@ export function VideoUploadZone({ file, onChange, onError }: VideoUploadZoneProp
           />
         </div>
       ) : (
-        <div className="relative rounded-xl overflow-hidden border border-slate-700 h-52 bg-slate-800/50 flex flex-col items-center justify-center p-6 group">
-          <div className="p-4 rounded-2xl bg-blue-500/10 border border-blue-500/20 mb-3">
-            <Video className="w-8 h-8 text-blue-400" />
+        <div className="relative rounded-xl overflow-hidden border border-slate-200 bg-white h-56 flex flex-col items-center justify-center p-6 shadow-2xs">
+          <div className="w-12 h-12 rounded-xl bg-blue-50 border border-blue-100 flex items-center justify-center text-blue-600 mb-2">
+            <Film className="w-6 h-6" />
           </div>
-          <p className="text-white font-medium text-sm truncate max-w-md">{file.name}</p>
-          <p className="text-slate-400 text-xs mt-1">{(file.size / (1024 * 1024)).toFixed(2)} MB</p>
+          <p className="text-slate-800 font-semibold text-sm truncate max-w-md">{file.name}</p>
+          <p className="text-slate-500 text-xs mt-0.5">
+            Size: {(file.size / (1024 * 1024)).toFixed(2)} MB • Ready for temporal extraction
+          </p>
 
           <div className="mt-4 flex items-center gap-2">
             <button
+              type="button"
               onClick={handleRemove}
-              className="flex items-center gap-1.5 px-3 py-1.5 bg-red-500/80 hover:bg-red-500 text-white rounded-lg text-xs transition-colors"
+              className="flex items-center gap-1.5 px-3 py-1.5 bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 rounded-lg text-xs font-medium transition-colors"
             >
               <X className="w-3.5 h-3.5" /> Remove Video
             </button>
+          </div>
+
+          <div className="absolute bottom-2 left-2 right-2">
+            <div className="flex items-center justify-between bg-slate-50 rounded-lg px-2.5 py-1.5 border border-slate-200/80 text-[11px] text-slate-600">
+              <span className="flex items-center gap-1.5">
+                <FileCheck className="w-3.5 h-3.5 text-emerald-600" />
+                Valid video format
+              </span>
+              <span className="font-mono text-slate-500">{(file.size / (1024 * 1024)).toFixed(1)} MB</span>
+            </div>
           </div>
         </div>
       )}

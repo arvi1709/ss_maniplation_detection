@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Scan, RotateCcw, AlertCircle, Video } from 'lucide-react';
+import { Play, RotateCcw, AlertCircle, Film, Sparkles, Layers, Sliders } from 'lucide-react';
 import { Header } from './components/Header';
 import { ModeToggle } from './components/ModeToggle';
 import { UploadZone } from './components/UploadZone';
@@ -71,7 +71,7 @@ export default function App() {
       }, 100);
     } catch (err) {
       const msg =
-        err instanceof Error ? err.message : 'Analysis failed. Ensure the backend is running.';
+        err instanceof Error ? err.message : 'Processing failed. Ensure the backend is reachable.';
       setError(msg);
     } finally {
       setLoading(false);
@@ -90,127 +90,170 @@ export default function App() {
 
   const getVerdictBadgeStyle = (verdict: string, score: number) => {
     if (verdict === 'Differences Detected' || verdict === 'Possible Manipulation Detected') {
-      return 'bg-red-500/10 border border-red-500/20 text-red-400';
+      return 'bg-rose-50 border-rose-200 text-rose-800';
     }
     if (verdict === 'Unable to Compare Reliably') {
-      return 'bg-amber-500/10 border border-amber-500/20 text-amber-400';
+      return 'bg-amber-50 border-amber-200 text-amber-800';
     }
     if (verdict === 'No Significant Differences Detected' || verdict === 'No Manipulation Detected') {
-      return 'bg-green-500/10 border border-green-500/20 text-green-400';
+      return 'bg-emerald-50 border-emerald-200 text-emerald-800';
     }
     return score >= 30
-      ? 'bg-red-500/10 border border-red-500/20 text-red-400'
-      : 'bg-green-500/10 border border-green-500/20 text-green-400';
+      ? 'bg-rose-50 border-rose-200 text-rose-800'
+      : 'bg-emerald-50 border-emerald-200 text-emerald-800';
   };
 
   return (
-    <div className="min-h-screen bg-slate-950 text-white">
+    <div className="min-h-screen bg-slate-50 text-slate-900 flex flex-col font-sans">
       <Header />
 
       {loading && <LoadingOverlay mode={mode} />}
 
-      <main className="max-w-7xl mx-auto px-6 py-10 space-y-8">
+      <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 py-8 sm:py-10 space-y-8">
         {backendOnline === false && <BackendWarning />}
 
-        <div className="space-y-2">
-          <h2 className="text-2xl font-bold text-white">Digital Forensic & Temporal Analysis</h2>
-          <p className="text-slate-400">
-            Upload screenshots or short video files to evaluate image integrity and temporal visual changes using classical computer vision.
-          </p>
-        </div>
+        {/* Hero Section */}
+        <section className="bg-white border border-slate-200/90 rounded-2xl p-6 sm:p-10 shadow-xs relative overflow-hidden">
+          <div className="max-w-3xl space-y-4 relative z-10">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-50 border border-blue-200/80 text-blue-700 text-xs font-semibold">
+              <Sparkles className="w-3.5 h-3.5 text-blue-600" />
+              <span>Image &amp; Video Processing Laboratory</span>
+            </div>
 
-        <div className="bg-slate-900 border border-slate-700/50 rounded-2xl p-6 space-y-6">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-            <ModeToggle mode={mode} onChange={handleModeChange} />
-            <p className="text-slate-500 text-sm">
-              {mode === 'single'
-                ? 'Analyze a single screenshot for digital manipulation signals'
-                : mode === 'compare'
-                ? 'Compare original reference and suspected images side-by-side'
-                : 'Extract representative frames & analyze inter-frame visual change'}
+            <h2 className="text-2xl sm:text-4xl font-extrabold text-slate-900 tracking-tight leading-tight">
+              Explore Image and Video Processing
+            </h2>
+
+            <p className="text-slate-600 text-sm sm:text-base leading-relaxed">
+              Analyze images, compare visual differences, and explore temporal changes in videos using classical computer vision techniques.
             </p>
+
+            {/* Techniques Pills */}
+            <div className="pt-2 flex flex-wrap gap-2 text-xs font-medium text-slate-600">
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-slate-100 border border-slate-200 text-slate-700">
+                <span className="w-1.5 h-1.5 rounded-full bg-blue-600" />
+                Structural Similarity (SSIM)
+              </span>
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-slate-100 border border-slate-200 text-slate-700">
+                <span className="w-1.5 h-1.5 rounded-full bg-teal-600" />
+                Error Level Analysis (ELA)
+              </span>
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-slate-100 border border-slate-200 text-slate-700">
+                <span className="w-1.5 h-1.5 rounded-full bg-indigo-600" />
+                ORB Feature Alignment
+              </span>
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-slate-100 border border-slate-200 text-slate-700">
+                <span className="w-1.5 h-1.5 rounded-full bg-violet-600" />
+                Temporal Frame Differencing
+              </span>
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-slate-100 border border-slate-200 text-slate-700">
+                <span className="w-1.5 h-1.5 rounded-full bg-amber-600" />
+                Noise &amp; Edge Profiling
+              </span>
+            </div>
+          </div>
+        </section>
+
+        {/* Processing Workbench */}
+        <section className="bg-white border border-slate-200/90 rounded-2xl p-6 sm:p-8 shadow-xs space-y-6">
+          <div className="space-y-3">
+            <div className="flex items-center justify-between">
+              <h3 className="text-slate-900 font-bold text-base flex items-center gap-2">
+                <Sliders className="w-4 h-4 text-blue-600" />
+                Select Laboratory Mode
+              </h3>
+              <span className="text-slate-400 text-xs">Step 1 of 2</span>
+            </div>
+            <ModeToggle mode={mode} onChange={handleModeChange} />
           </div>
 
-          {/* Mode-specific upload zone */}
-          {mode === 'video' ? (
-            <VideoUploadZone
-              file={videoFile}
-              onChange={setVideoFile}
-              onError={setError}
-            />
-          ) : (
-            <div className="flex flex-col sm:flex-row gap-4">
-              <UploadZone
-                label={mode === 'single' ? 'Screenshot to Analyze' : 'Original Reference Image'}
-                file={originalFile}
-                onChange={setOriginalFile}
+          <div className="pt-2">
+            <div className="flex items-center justify-between mb-3">
+              <h3 className="text-slate-900 font-bold text-base flex items-center gap-2">
+                <Layers className="w-4 h-4 text-blue-600" />
+                Upload Input Data
+              </h3>
+              <span className="text-slate-400 text-xs">Step 2 of 2</span>
+            </div>
+
+            {/* Mode-specific upload zone */}
+            {mode === 'video' ? (
+              <VideoUploadZone
+                file={videoFile}
+                onChange={setVideoFile}
+                onError={setError}
               />
-              {mode === 'compare' && (
-                <>
-                  <div className="hidden sm:flex items-center justify-center px-2">
-                    <div className="h-full w-px bg-slate-700" />
-                  </div>
+            ) : (
+              <div className="flex flex-col sm:flex-row gap-4">
+                <UploadZone
+                  label={mode === 'single' ? 'Input Image to Process' : 'Original Reference Image (Baseline)'}
+                  file={originalFile}
+                  onChange={setOriginalFile}
+                />
+                {mode === 'compare' && (
                   <UploadZone
-                    label="Suspected / Edited Image"
+                    label="Comparison Image (Suspected / Modified)"
                     file={suspectedFile}
                     onChange={setSuspectedFile}
                   />
-                </>
-              )}
-            </div>
-          )}
+                )}
+              </div>
+            )}
+          </div>
 
-          {/* Descriptive Help Banners */}
+          {/* Mode Guidance Notes */}
           {mode === 'compare' && (
-            <div className="bg-blue-500/5 border border-blue-500/20 rounded-xl p-4">
-              <p className="text-blue-300 text-sm">
-                <strong>Comparison Mode:</strong> Upload the original reference image on the left and suspected version on the right. The system compares both using SSIM structural difference analysis, difference heatmaps, and bounding box localization. Images should have the same alignment and viewpoint for highest accuracy.
-              </p>
+            <div className="bg-blue-50/70 border border-blue-200 rounded-xl p-4 text-xs text-blue-900 leading-relaxed">
+              <strong className="font-semibold text-blue-950">Comparative Mode:</strong> Upload the reference baseline image on the left and the suspected image on the right. The system registers both images using ORB feature matching and computes localized SSIM structural difference heatmaps and contour bounding boxes.
             </div>
           )}
 
           {mode === 'video' && (
-            <div className="bg-blue-500/5 border border-blue-500/20 rounded-xl p-4">
-              <p className="text-blue-300 text-sm">
-                <strong>Video Analysis Mode:</strong> Upload an MP4 or AVI video (up to 60s, max 100 MB). OpenCV extracts representative frames at 1.0s intervals, computes inter-frame SSIM and pixel disparity, and identifies scene cuts or rapid transitions.
-              </p>
+            <div className="bg-blue-50/70 border border-blue-200 rounded-xl p-4 text-xs text-blue-900 leading-relaxed">
+              <strong className="font-semibold text-blue-950">Video Mode:</strong> Upload an MP4 or AVI video (up to 60s, max 100 MB). OpenCV extracts representative frames at 1.0s intervals, computes inter-frame SSIM and pixel disparity, and identifies significant visual transitions.
             </div>
           )}
 
           {error && (
-            <div className="flex items-start gap-3 bg-red-500/10 border border-red-500/20 rounded-xl p-4">
-              <AlertCircle className="w-5 h-5 text-red-400 shrink-0 mt-0.5" />
+            <div className="flex items-start gap-3 bg-rose-50 border border-rose-200 rounded-xl p-4 text-rose-800 text-xs">
+              <AlertCircle className="w-4 h-4 text-rose-600 shrink-0 mt-0.5" />
               <div>
-                <p className="text-red-300 font-medium text-sm">Analysis Error</p>
-                <p className="text-red-400/80 text-sm mt-0.5">{error}</p>
+                <p className="font-bold text-rose-900">Processing Error</p>
+                <p className="mt-0.5 leading-relaxed">{error}</p>
               </div>
             </div>
           )}
 
-          <div className="flex gap-3 flex-wrap">
+          {/* Action Trigger Buttons */}
+          <div className="pt-2 flex items-center gap-3 flex-wrap">
             <button
+              type="button"
               onClick={handleAnalyze}
               disabled={!canAnalyze || loading}
-              className="flex items-center gap-2 px-6 py-3 bg-blue-600 hover:bg-blue-500 disabled:bg-slate-700 disabled:text-slate-500 text-white rounded-xl font-medium transition-all duration-200 shadow-lg shadow-blue-600/20 disabled:shadow-none"
+              className="flex items-center gap-2 px-6 py-3.5 bg-blue-600 hover:bg-blue-700 disabled:bg-slate-200 disabled:text-slate-400 text-white rounded-xl text-sm font-semibold transition-all duration-150 shadow-xs hover:shadow disabled:shadow-none cursor-pointer disabled:cursor-not-allowed"
             >
-              {mode === 'video' ? <Video className="w-5 h-5" /> : <Scan className="w-5 h-5" />}
+              {mode === 'video' ? <Film className="w-4 h-4" /> : <Play className="w-4 h-4 fill-current" />}
               {loading
                 ? 'Processing...'
                 : mode === 'video'
                 ? 'Run Video Temporal Analysis'
-                : 'Run Forensic Analysis'}
+                : mode === 'compare'
+                ? 'Run Image Comparison'
+                : 'Run Image Processing Pipeline'}
             </button>
+
             {(results || videoResults) && (
               <button
+                type="button"
                 onClick={handleReset}
-                className="flex items-center gap-2 px-4 py-3 border border-slate-600 hover:border-slate-500 text-slate-400 hover:text-slate-200 rounded-xl font-medium transition-colors"
+                className="flex items-center gap-2 px-4 py-3.5 border border-slate-300 hover:bg-slate-100 text-slate-700 rounded-xl text-sm font-semibold transition-colors cursor-pointer"
               >
                 <RotateCcw className="w-4 h-4" />
-                Reset
+                Reset Pipeline
               </button>
             )}
           </div>
-        </div>
+        </section>
 
         {/* Results Section */}
         <div id="results-section">
@@ -220,10 +263,15 @@ export default function App() {
 
           {mode !== 'video' && results && (
             <div className="space-y-6">
-              <div className="flex items-center justify-between">
-                <h3 className="text-xl font-bold text-white">Analysis Results</h3>
+              <div className="flex items-center justify-between pb-2 border-b border-slate-200">
+                <div>
+                  <h3 className="text-xl font-bold text-slate-900">Laboratory Processing Results</h3>
+                  <p className="text-slate-500 text-xs mt-0.5">
+                    Multi-modal visual outputs and quantitative diagnostic metrics
+                  </p>
+                </div>
                 <span
-                  className={`px-3 py-1.5 rounded-full text-sm font-medium ${getVerdictBadgeStyle(
+                  className={`px-3.5 py-1.5 rounded-full text-xs font-semibold border ${getVerdictBadgeStyle(
                     results.verdict,
                     results.confidence_score
                   )}`}
@@ -239,20 +287,20 @@ export default function App() {
               />
 
               {results.mode === 'compare' && results.original_image && results.suspected_image && (
-                <div>
-                  <h4 className="text-slate-300 text-sm font-medium uppercase tracking-widest mb-3">
-                    Uploaded Images
+                <div className="space-y-3">
+                  <h4 className="text-slate-700 text-xs font-bold uppercase tracking-wider">
+                    Input Image Pair
                   </h4>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <ImageCard
                       title="Original Reference Image"
-                      subtitle="Reference image for baseline comparison"
+                      subtitle="Baseline reference input for comparative alignment"
                       src={results.original_image}
                       accent="green"
                     />
                     <ImageCard
-                      title="Suspected Image"
-                      subtitle="Image under comparative forensic analysis"
+                      title="Comparison Image"
+                      subtitle="Subject image evaluated for visual discrepancies"
                       src={results.suspected_image}
                       accent="red"
                     />
@@ -260,28 +308,28 @@ export default function App() {
                 </div>
               )}
 
-              <div>
-                <h4 className="text-slate-300 text-sm font-medium uppercase tracking-widest mb-3">
-                  Forensic Analysis Outputs
+              <div className="space-y-3">
+                <h4 className="text-slate-700 text-xs font-bold uppercase tracking-wider">
+                  Visual Processing Feature Maps
                 </h4>
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                   {results.diff_heatmap && (
                     <ImageCard
                       title="Difference Heatmap"
-                      subtitle="Pixel & structural differences (blue = match, red = modified)"
+                      subtitle="SSIM difference field (Blue = match, Red = modified)"
                       src={results.diff_heatmap}
                       accent="blue"
                     />
                   )}
                   <ImageCard
                     title="Highlighted Regions"
-                    subtitle="Bounding boxes around significant differences detected"
+                    subtitle="Contour bounding boxes around detected discrepancies"
                     src={results.highlighted_image}
                     accent="red"
                   />
                   <ImageCard
-                    title="ELA Output"
-                    subtitle="Error Level Analysis — compression inconsistencies"
+                    title="Error Level Analysis (ELA)"
+                    subtitle="JPEG compression error residual distribution"
                     src={results.ela_image}
                     accent="amber"
                   />
@@ -305,20 +353,25 @@ export default function App() {
 
               <ReportButton
                 report={results.report}
-                filename={`forensic_report_${new Date().toISOString().slice(0, 10)}.txt`}
+                filename={`ivp_analysis_report_${new Date().toISOString().slice(0, 10)}.txt`}
               />
             </div>
           )}
         </div>
       </main>
 
-      <footer className="border-t border-slate-800 mt-20 py-8">
-        <div className="max-w-7xl mx-auto px-6 flex flex-col sm:flex-row items-center justify-between gap-3">
-          <p className="text-slate-500 text-sm">
-            ImageGuard — Digital Image & Video Forensic Analysis System
-          </p>
-          <p className="text-slate-600 text-xs">
-            Computer Vision + Cyber Law | BTech IVP Project | IT Act 2000 | Indian Evidence Act Sec 65B
+      <footer className="border-t border-slate-200 bg-white mt-16 py-8">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 flex flex-col sm:flex-row items-center justify-between gap-3 text-center sm:text-left">
+          <div>
+            <p className="text-slate-800 text-sm font-semibold">
+              ImageGuard Studio — Image &amp; Video Processing Laboratory
+            </p>
+            <p className="text-slate-500 text-xs mt-0.5">
+              Academic Computer Vision Project • B.Tech Image and Video Processing (IVP)
+            </p>
+          </div>
+          <p className="text-slate-400 text-xs">
+            OpenCV • scikit-image • React 18 • Flask
           </p>
         </div>
       </footer>

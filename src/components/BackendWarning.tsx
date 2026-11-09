@@ -8,23 +8,32 @@ export function BackendWarning() {
   if (dismissed) return null;
 
   return (
-    <div className="bg-amber-500/10 border border-amber-500/30 rounded-xl p-4 flex items-start gap-3">
-      <AlertTriangle className="w-5 h-5 text-amber-400 shrink-0 mt-0.5" />
+    <div className="bg-amber-50 border border-amber-200 rounded-2xl p-4 flex items-start gap-3.5 shadow-2xs">
+      <div className="p-2 bg-amber-100 text-amber-800 rounded-xl shrink-0">
+        <AlertTriangle className="w-5 h-5" />
+      </div>
       <div className="flex-1 min-w-0">
-        <p className="text-amber-300 font-medium text-sm">Python Backend Required</p>
-        <p className="text-amber-400/80 text-xs mt-1">
-          This tool requires the Python Flask backend running at{' '}
-          <code className="bg-amber-500/20 px-1.5 py-0.5 rounded font-mono">{API_BASE}</code>.
-          Start it with:
+        <p className="text-amber-900 font-bold text-sm">Flask Backend Connection Notice</p>
+        <p className="text-amber-800/90 text-xs mt-1 leading-relaxed">
+          The processing pipeline connects to the Python Flask backend at{' '}
+          <code className="bg-amber-100 text-amber-900 px-1.5 py-0.5 rounded font-mono font-semibold">
+            {API_BASE}
+          </code>
+          . If you are developing locally, start the local server with:
         </p>
-        <div className="mt-2 flex items-center gap-2 bg-slate-900/60 rounded-lg px-3 py-2 border border-slate-700/50">
+        <div className="mt-2.5 flex items-center gap-2 bg-slate-900 rounded-xl px-3.5 py-2 border border-slate-800 shadow-inner">
           <Terminal className="w-3.5 h-3.5 text-slate-400 shrink-0" />
-          <code className="text-slate-300 text-xs font-mono">
-            cd backend && pip install -r requirements.txt && python app.py
+          <code className="text-slate-200 text-xs font-mono select-all">
+            cd backend &amp;&amp; pip install -r requirements.txt &amp;&amp; python app.py
           </code>
         </div>
       </div>
-      <button onClick={() => setDismissed(true)} className="text-amber-500 hover:text-amber-300 transition-colors shrink-0">
+      <button
+        type="button"
+        onClick={() => setDismissed(true)}
+        className="text-amber-600 hover:text-amber-900 p-1 rounded-lg hover:bg-amber-100/50 transition-colors shrink-0"
+        title="Dismiss notice"
+      >
         <X className="w-4 h-4" />
       </button>
     </div>

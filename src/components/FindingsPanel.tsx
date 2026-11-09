@@ -1,4 +1,4 @@
-import { AlertTriangle, CheckCircle, Activity, Layers, ScanLine, FileText, Compass } from 'lucide-react';
+import { CheckCircle, Activity, Layers, ScanLine, FileText, Compass, AlertCircle } from 'lucide-react';
 
 interface FindingsPanelProps {
   findings: string[];
@@ -37,80 +37,96 @@ export function FindingsPanel({
 
   const metrics = [
     {
-      icon: <Layers className="w-4 h-4" />,
+      icon: <Layers className="w-4 h-4 text-blue-600" />,
       label: 'ELA Intensity',
       value: elaIntensity.toFixed(2),
       status: (elaIntensity > 15 ? 'high' : elaIntensity > 8 ? 'medium' : 'low') as 'high' | 'medium' | 'low',
-      desc: 'Compression anomaly level',
+      desc: 'Compression residual variance',
     },
     {
-      icon: <Activity className="w-4 h-4" />,
-      label: 'Noise Score',
+      icon: <Activity className="w-4 h-4 text-teal-600" />,
+      label: 'Noise Variance',
       value: `${(noiseScore * 100).toFixed(1)}%`,
       status: (noiseScore > 0.2 ? 'high' : noiseScore > 0.1 ? 'medium' : 'low') as 'high' | 'medium' | 'low',
-      desc: 'Abnormal noise regions',
+      desc: 'High-frequency residual noise',
     },
     {
-      icon: <ScanLine className="w-4 h-4" />,
-      label: isCompare ? 'Changed Regions' : 'Suspicious Regions',
+      icon: <ScanLine className="w-4 h-4 text-indigo-600" />,
+      label: isCompare ? 'Changed Regions' : 'Salient Discrepancies',
       value: String(suspiciousRegions),
       status: getRegionStatus(suspiciousRegions),
-      desc: isCompare ? 'Discrepant areas bounded' : 'Areas flagged for review',
+      desc: isCompare ? 'Segmented contour regions' : 'Flagged anomalous regions',
     },
     ...(ssimScore !== undefined
       ? [{
-          icon: <FileText className="w-4 h-4" />,
+          icon: <FileText className="w-4 h-4 text-violet-600" />,
           label: 'SSIM Score',
           value: ssimScore.toFixed(4),
           status: getSsimStatus(ssimScore, suspiciousRegions),
-          desc: 'Structural similarity index',
+          desc: 'Structural similarity index (0 to 1)',
         }]
       : []),
   ];
 
-  const statusColors: Record<string, string> = {
-    high: 'text-red-400 bg-red-500/10 border-red-500/20',
-    medium: 'text-amber-400 bg-amber-500/10 border-amber-500/20',
-    low: 'text-green-400 bg-green-500/10 border-green-500/20',
+  const statusBadge: Record<string, string> = {
+    high: 'text-rose-700 bg-rose-50 border-rose-200',
+    medium: 'text-amber-700 bg-amber-50 border-amber-200',
+    low: 'text-emerald-700 bg-emerald-50 border-emerald-200',
   };
 
   return (
     <div className="space-y-4">
+      {/* Metric Cards Grid */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
         {metrics.map((m) => (
-          <div key={m.label} className={`rounded-xl border p-3 ${statusColors[m.status]}`}>
-            <div className="flex items-center gap-2 mb-1">
-              {m.icon}
-              <span className="text-xs font-medium uppercase tracking-wide">{m.label}</span>
+          <div
+            key={m.label}
+            className="rounded-xl border border-slate-200 bg-white p-4 shadow-2xs flex flex-col justify-between"
+          >
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-slate-600 text-xs font-semibold uppercase tracking-wider">{m.label}</span>
+              <div className="p-1.5 rounded-lg bg-slate-50 border border-slate-100">{m.icon}</div>
             </div>
-            <p className="text-2xl font-bold">{m.value}</p>
-            <p className="text-xs opacity-70 mt-0.5">{m.desc}</p>
+            <div>
+              <div className="flex items-baseline gap-2">
+                <p className="text-2xl font-bold text-slate-800 font-mono">{m.value}</p>
+                <span className={`text-[10px] font-semibold uppercase px-2 py-0.5 rounded-md border ${statusBadge[m.status]}`}>
+                  {m.status}
+                </span>
+              </div>
+              <p className="text-slate-500 text-xs mt-1">{m.desc}</p>
+            </div>
           </div>
         ))}
       </div>
 
       {alignmentInfo && alignmentInfo.description && (
-        <div className="flex items-center gap-2.5 px-4 py-2.5 rounded-xl border border-blue-500/20 bg-blue-500/5 text-blue-300 text-xs">
-          <Compass className="w-4 h-4 shrink-0 text-blue-400" />
-          <span>{alignmentInfo.description}</span>
+        <div className="flex items-center gap-3 px-4 py-3 rounded-xl border border-blue-200 bg-blue-50/70 text-blue-900 text-xs">
+          <Compass className="w-4 h-4 shrink-0 text-blue-600" />
+          <span className="leading-relaxed font-medium">{alignmentInfo.description}</span>
         </div>
       )}
 
-      <div className="rounded-xl border border-slate-700/50 bg-slate-800/50 p-5">
-        <h4 className="text-slate-300 text-sm font-medium uppercase tracking-widest mb-3">
-          Detection Findings
-        </h4>
+      {/* Observations & Findings Box */}
+      <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-2xs">
+        <div className="flex items-center justify-between pb-3 mb-3 border-b border-slate-100">
+          <h4 className="text-slate-800 text-sm font-bold uppercase tracking-wider">
+            Image Processing Observations
+          </h4>
+          <span className="text-slate-400 text-xs font-medium">Diagnostic Insights</span>
+        </div>
+
         {findings.length === 0 ? (
-          <div className="flex items-center gap-3 text-green-400">
-            <CheckCircle className="w-5 h-5 shrink-0" />
-            <p className="text-sm">No significant anomalies detected in this analysis.</p>
+          <div className="flex items-center gap-3 text-emerald-700 bg-emerald-50/70 border border-emerald-100 rounded-xl p-3.5">
+            <CheckCircle className="w-5 h-5 shrink-0 text-emerald-600" />
+            <p className="text-sm font-medium">No significant visual anomalies or structural discrepancies detected.</p>
           </div>
         ) : (
           <ul className="space-y-2.5">
             {findings.map((finding, i) => (
-              <li key={i} className="flex items-start gap-3">
-                <AlertTriangle className="w-4 h-4 text-amber-400 mt-0.5 shrink-0" />
-                <span className="text-slate-300 text-sm">{finding}</span>
+              <li key={i} className="flex items-start gap-3 p-2.5 rounded-lg bg-slate-50 border border-slate-100 text-slate-700 text-xs leading-relaxed">
+                <AlertCircle className="w-4 h-4 text-amber-500 mt-0.5 shrink-0" />
+                <span>{finding}</span>
               </li>
             ))}
           </ul>
